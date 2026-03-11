@@ -1,5 +1,5 @@
 """
-Clase del jugador
+Clase del personaje jugable
 """
 import pygame
 from constants import (
@@ -13,19 +13,18 @@ class Personaje(pygame.sprite.Sprite):
     
     def __init__(self, x, y):
         super().__init__()
-        # Cargar imágenes
         self.image_right = pygame.image.load(IMAGE_PLAYER_RIGHT).convert_alpha()
         self.image_left = pygame.image.load(IMAGE_PLAYER_LEFT).convert_alpha()
-        self.image = self.image_right  # Comienza mirando a la derecha
+        self.image = self.image_right
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         
-        # Velocidad
         self.vel_x = 0
         self.vel_y = 0
         self.velocidad = PLAYER_SPEED
-        self.direccion = "right"  # Rastrear última dirección
+        self.direccion = "right"
+        self.__vida = 100
         
     def manejar_input(self, keys):
         """Controlar el personaje con WASD"""
@@ -67,3 +66,15 @@ class Personaje(pygame.sprite.Sprite):
     def dibujar(self, surface):
         """Dibujar el personaje"""
         surface.blit(self.image, self.rect)
+
+    def recibir_dano(self, cantidad):
+        """Reduce vida del personaje sin bajar de 0."""
+        self.__vida = max(0, self.__vida - cantidad)
+
+    def obtener_vida(self):
+        """Devuelve la vida actual en porcentaje (0-100)."""
+        return self.__vida
+
+    def esta_sin_vida(self):
+        """Indica si el personaje ya no tiene vida."""
+        return self.__vida <= 0

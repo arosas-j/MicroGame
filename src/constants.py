@@ -10,9 +10,10 @@ SCREEN_HEIGHT = 600
 FPS = 60
 WINDOW_TITLE = "Bee game"
 
-# Rutas de recursos (relativo al directorio de este archivo)
+# Rutas de recursos
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(SCRIPT_DIR, "../assets/textures")
+SOUND_DIR = os.path.join(SCRIPT_DIR, "../assets/sound")
 
 # Rutas de imágenes
 IMAGE_PLAYER_RIGHT = os.path.join(ASSETS_DIR, "p_right.png")
@@ -20,6 +21,10 @@ IMAGE_PLAYER_LEFT = os.path.join(ASSETS_DIR, "p_left.png")
 IMAGE_ENEMY = os.path.join(ASSETS_DIR, "enemy.png")
 IMAGE_COLLECTIBLE = os.path.join(ASSETS_DIR, "collectable.png")
 IMAGE_BACKGROUND = os.path.join(ASSETS_DIR, "background.png")
+
+# Rutas de audio
+SOUND_PICK_COLLECTIBLE = os.path.join(SOUND_DIR, "pick_collectable.wav")
+MUSIC_BACKGROUND = os.path.join(SOUND_DIR, "music.ogg")
 
 # Configuración de personaje
 PLAYER_SPEED = 5
@@ -29,6 +34,7 @@ PLAYER_START_Y = SCREEN_HEIGHT // 2
 # Configuración de enemigos
 ENEMY_SPEED = 3
 ENEMY_SPAWN_RATE = 60  # Frames entre spawns
+ENEMY_DAMAGE = 25  # Daño por colisión con enemigo
 
 # Configuración de coleccionables
 COLLECTIBLE_SPEED = 2
@@ -37,6 +43,10 @@ COLLECTIBLE_POINTS = 10
 
 # Configuración de fondo
 BACKGROUND_TILE_SIZE = 32
+
+# Configuración de audio
+SFX_VOLUME = 0.5
+MUSIC_VOLUME = 0.35
 
 # Colores
 COLOR_BLACK = (0, 0, 0)

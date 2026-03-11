@@ -1,16 +1,23 @@
 """
-Juego - Bucle principal
+Bucle principal
 """
 import pygame
 from constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, FPS, WINDOW_TITLE,
     ENEMY_SPAWN_RATE, COLLECTIBLE_SPAWN_RATE, COLLECTIBLE_POINTS,
-    IMAGE_BACKGROUND, BACKGROUND_TILE_SIZE, COLOR_BLACK
+    IMAGE_BACKGROUND, BACKGROUND_TILE_SIZE, COLOR_BLACK,
+    SOUND_PICK_COLLECTIBLE, SFX_VOLUME,
+    MUSIC_BACKGROUND, MUSIC_VOLUME, ENEMY_DAMAGE
 )
 from player import Personaje
 from enemy import Enemigo
 from collectible import Coleccionable
-from ui import mostrar_game_over, dibujar_puntuacion
+from ui import (
+    mostrar_game_over,
+    dibujar_puntuacion,
+    dibujar_barra_vida,
+    mostrar_pantalla_inicio,
+)
 
 pygame.init()
 
@@ -21,6 +28,15 @@ clock = pygame.time.Clock()
 
 # Cargar fondo
 background = pygame.image.load(IMAGE_BACKGROUND).convert()
+
+# Cargar efectos de sonido
+sonido_recoger = pygame.mixer.Sound(SOUND_PICK_COLLECTIBLE)
+sonido_recoger.set_volume(SFX_VOLUME)
+
+# Cargar y reproducir música de fondo en bucle infinito
+pygame.mixer.music.load(MUSIC_BACKGROUND)
+pygame.mixer.music.set_volume(MUSIC_VOLUME)
+pygame.mixer.music.play(-1)
 
 # Crear personaje
 personaje = Personaje(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
@@ -80,14 +96,18 @@ def actualizar(keys):
             coleccionables.remove(coleccionable)
     
     # Detectar colisión con enemigos
-    for enemigo in enemigos:
+    for enemigo in enemigos[:]:
         if personaje.rect.colliderect(enemigo.rect):
-            return False  # Fin del juego
+            personaje.recibir_dano(ENEMY_DAMAGE)
+            enemigos.remove(enemigo)
+            if personaje.esta_sin_vida():
+                return False  # Fin del juego
     
     # Detectar colisión con coleccionables
     for coleccionable in coleccionables[:]:
         if personaje.rect.colliderect(coleccionable.rect):
             puntuacion += COLLECTIBLE_POINTS
+            sonido_recoger.play()
             coleccionables.remove(coleccionable)
     
     return True  # Juego continúa
@@ -109,6 +129,7 @@ def dibujar():
     
     # Mostrar UI
     dibujar_puntuacion(screen, puntuacion)
+    dibujar_barra_vida(screen, personaje.obtener_vida())
     
     pygame.display.update()
 
@@ -147,5 +168,15 @@ def bucle_principal():
 
 
 if __name__ == "__main__":
-    bucle_principal()
+    accion_inicio = mostrar_pantalla_inicio(
+        screen,
+        background,
+        BACKGROUND_TILE_SIZE,
+        WINDOW_TITLE,
+    )
+
+    if accion_inicio == "comenzar":
+        bucle_principal()
+
+    pygame.mixer.music.stop()
     pygame.quit()
